@@ -13,6 +13,9 @@ const timeOptions = [
   { label: '1 an', value: 'long_term' }
 ];
 
+const topLimit = ref(10);
+const limitOptions = [10, 20, 50, 100].map(n => ({ label: `Top ${n}`, value: n }));
+
 const topTracks = ref([]);
 const topArtists = ref([]);
 const audioFeatures = ref({});
@@ -29,10 +32,10 @@ const fetchStats = async () => {
   errorMessage.value = null;
   try {
     const tracksRes = await api.get('/me/top/tracks', {
-      params: { limit: 10, time_range: timeRange.value }
+      params: { limit: topLimit.value, time_range: timeRange.value }
     });
     const artistsRes = await api.get('/me/top/artists', {
-      params: { limit: 10, time_range: timeRange.value }
+      params: { limit: topLimit.value, time_range: timeRange.value }
     });
     topTracks.value = tracksRes.data.items;
     topArtists.value = artistsRes.data.items;
@@ -55,38 +58,42 @@ const fetchStats = async () => {
   }
 };
 
+const openLink = (url) => {
+  window.open(url, '_blank');
+};
+
 onMounted(fetchStats);
 </script>
 
 <template>
   <div class="p-4">
     <h2 class="text-xl font-bold mb-4">📊 Vos Statistiques</h2>
-    <div class="mb-4">
+    <div class="mb-4 flex flex-col md:flex-row gap-2">
       <Dropdown v-model="timeRange" :options="timeOptions" optionLabel="label" optionValue="value" @change="fetchStats" class="w-full md:w-40" />
+      <Dropdown v-model="topLimit" :options="limitOptions" optionLabel="label" optionValue="value" @change="fetchStats" class="w-full md:w-40" />
     </div>
     <ProgressSpinner v-if="isLoading" />
     <div v-if="errorMessage" class="text-red-500">{{ errorMessage }}</div>
     <div v-if="!isLoading && !errorMessage">
-      <h3 class="text-lg font-semibold mb-2">🎵 Top 10 chansons</h3>
-      <ul class="mb-6">
-        <li v-for="track in topTracks" :key="track.id" class="mb-2 flex items-center">
-          <img :src="track.album.images[0]?.url" alt="cover" class="w-10 h-10 rounded mr-2" />
-          <span class="font-medium">{{ track.name }}</span>
-          <span class="text-sm text-gray-500 ml-1">- {{ track.artists.map(a => a.name).join(', ') }}</span>
-          <div v-if="audioFeatures[track.id]" class="ml-2 text-xs text-gray-600">
-            Énergie: {{ audioFeatures[track.id].energy }},
-            Dansabilité: {{ audioFeatures[track.id].danceability }},
-            Valence: {{ audioFeatures[track.id].valence }}
-          </div>
-        </li>
-      </ul>
-      <h3 class="text-lg font-semibold mb-2">🎤 Top 10 artistes</h3>
-      <ul class="mb-6">
-        <li v-for="artist in topArtists" :key="artist.id" class="mb-2 flex items-center">
-          <img :src="artist.images[0]?.url" alt="artist" class="w-10 h-10 rounded-full mr-2" />
-          <span class="font-medium">{{ artist.name }}</span>
-        </li>
-      </ul>
+      <h3 class="text-lg font-semibold mb-2">🎵 Top {{ topLimit }} chansons</h3>
+      <div class="tracks-grid mb-6">
+        <Card v-for="track in topTracks" :key="track.id" class="track-card" @click="openLink(track.external_urls.spotify)">
+          <template #header>
+            <img :src="track.album.images[0]?.url" alt="cover" class="track-cover" />
+          </template>
+          <template #title>{{ track.name }}</template>
+          <template #subtitle>{{ track.artists.map(a => a.name).join(', ') }}</template>
+        </Card>
+      </div>
+      <h3 class="text-lg font-semibold mb-2">🎤 Top {{ topLimit }} artistes</h3>
+      <div class="tracks-grid mb-6">
+        <Card v-for="artist in topArtists" :key="artist.id" class="track-card" @click="openLink(artist.external_urls.spotify)">
+          <template #header>
+            <img :src="artist.images[0]?.url" alt="artist" class="track-cover rounded-full object-cover" />
+          </template>
+          <template #title>{{ artist.name }}</template>
+        </Card>
+      </div>
       <h3 class="text-lg font-semibold mb-2">⏱ Temps d'écoute approximatif</h3>
       <p>{{ listeningTime }} minutes</p>
     </div>
@@ -94,4 +101,29 @@ onMounted(fetchStats);
 </template>
 
 <style scoped>
+.tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.track-card {
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.track-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.track-cover {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
 </style>
