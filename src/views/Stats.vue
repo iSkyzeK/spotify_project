@@ -68,25 +68,24 @@ onMounted(fetchStats);
     <div v-if="errorMessage" class="text-red-500">{{ errorMessage }}</div>
     <div v-if="!isLoading && !errorMessage">
       <h3 class="text-lg font-semibold mb-2">🎵 Top 10 chansons</h3>
-      <ul class="mb-6">
-        <li v-for="track in topTracks" :key="track.id" class="mb-2 flex items-center">
-          <img :src="track.album.images[0]?.url" alt="cover" class="w-10 h-10 rounded mr-2" />
-          <span class="font-medium">{{ track.name }}</span>
-          <span class="text-sm text-gray-500 ml-1">- {{ track.artists.map(a => a.name).join(', ') }}</span>
-          <div v-if="audioFeatures[track.id]" class="ml-2 text-xs text-gray-600">
-            Énergie: {{ audioFeatures[track.id].energy }},
-            Dansabilité: {{ audioFeatures[track.id].danceability }},
-            Valence: {{ audioFeatures[track.id].valence }}
-          </div>
-        </li>
-      </ul>
+      <div class="tracks-grid mb-6">
+        <Card v-for="track in topTracks" :key="track.id" class="track-card">
+          <template #header>
+            <img :src="track.album.images[0]?.url" alt="cover" class="track-cover" />
+          </template>
+          <template #title>{{ track.name }}</template>
+          <template #subtitle>{{ track.artists.map(a => a.name).join(', ') }}</template>
+        </Card>
+      </div>
       <h3 class="text-lg font-semibold mb-2">🎤 Top 10 artistes</h3>
-      <ul class="mb-6">
-        <li v-for="artist in topArtists" :key="artist.id" class="mb-2 flex items-center">
-          <img :src="artist.images[0]?.url" alt="artist" class="w-10 h-10 rounded-full mr-2" />
-          <span class="font-medium">{{ artist.name }}</span>
-        </li>
-      </ul>
+      <div class="tracks-grid mb-6">
+        <Card v-for="artist in topArtists" :key="artist.id" class="track-card">
+          <template #header>
+            <img :src="artist.images[0]?.url" alt="artist" class="track-cover rounded-full object-cover" />
+          </template>
+          <template #title>{{ artist.name }}</template>
+        </Card>
+      </div>
       <h3 class="text-lg font-semibold mb-2">⏱ Temps d'écoute approximatif</h3>
       <p>{{ listeningTime }} minutes</p>
     </div>
@@ -94,4 +93,29 @@ onMounted(fetchStats);
 </template>
 
 <style scoped>
+.tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.track-card {
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.track-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.track-cover {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
 </style>

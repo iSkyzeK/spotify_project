@@ -27,16 +27,42 @@ onMounted(fetchRecent);
         <h2 class="text-xl font-bold mb-4">🎧 Récemment écoutés</h2>
         <ProgressSpinner v-if="isLoading" />
         <div v-if="errorMessage" class="text-red-500">{{ errorMessage }}</div>
-        <ul v-if="recent.length" class="space-y-2">
-            <li v-for="item in recent" :key="item.played_at" class="flex items-center">
-                <img :src="item.track.album.images[0]?.url" class="w-10 h-10 rounded mr-2" />
-                <div>
-                    <p class="font-medium">{{ item.track.name }}</p>
-                    <p class="text-xs text-gray-500">{{ item.track.artists.map(a => a.name).join(', ') }}</p>
-                </div>
-            </li>
-        </ul>
+        <div v-if="recent.length" class="tracks-grid">
+            <Card v-for="item in recent" :key="item.played_at" class="track-card">
+                <template #header>
+                    <img :src="item.track.album.images[0]?.url" class="track-cover" />
+                </template>
+                <template #title>{{ item.track.name }}</template>
+                <template #subtitle>{{ item.track.artists.map(a => a.name).join(', ') }}</template>
+            </Card>
+        </div>
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.track-card {
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.track-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.track-cover {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+</style>
