@@ -14,7 +14,7 @@ const timeOptions = [
 ];
 
 const topLimit = ref(10);
-const limitOptions = [10, 20, 50, 100].map(n => ({ label: `Top ${n}`, value: n }));
+const limitOptions = [10, 20, 50].map(n => ({ label: `Top ${n}`, value: n }));
 
 const topTracks = ref([]);
 const topArtists = ref([]);
@@ -60,16 +60,28 @@ onMounted(fetchStats);
     <div v-if="!isLoading && !errorMessage">
       <h3 class="text-lg font-semibold mb-2">🎵 Top {{ topLimit }} chansons</h3>
       <div class="tracks-grid mb-6">
-        <Card v-for="track in topTracks" :key="track.id" class="track-card" @click="openLink(track.external_urls.spotify)">
+        <Card
+          v-for="track in topTracks"
+          :key="track.id"
+          class="track-card"
+          @click="openLink(track.external_urls.spotify)"
+        >
           <template #header>
             <img :src="track.album.images[0]?.url" alt="cover" class="track-cover" />
           </template>
           <template #title>{{ track.name }}</template>
           <template #subtitle>{{ track.artists.map(a => a.name).join(', ') }}</template>
         </Card>
+      </div> <!-- 👈 fermeture de la grid des chansons -->
+
       <h3 class="text-lg font-semibold mb-2">🎤 Top {{ topLimit }} artistes</h3>
       <div class="tracks-grid mb-6">
-        <Card v-for="artist in topArtists" :key="artist.id" class="track-card" @click="openLink(artist.external_urls.spotify)">
+        <Card
+          v-for="artist in topArtists"
+          :key="artist.id"
+          class="track-card"
+          @click="openLink(artist.external_urls.spotify)"
+        >
           <template #header>
             <img :src="artist.images[0]?.url" alt="artist" class="track-cover rounded-full object-cover" />
           </template>
@@ -79,6 +91,7 @@ onMounted(fetchStats);
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .tracks-grid {
@@ -106,4 +119,5 @@ onMounted(fetchStats);
     object-fit: cover;
     border-radius: 8px;
 }
+</style>
 

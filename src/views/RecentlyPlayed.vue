@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref } from 'vue';
 import api from '@/api/spotify';
+import { onMounted, ref } from 'vue';
 
 const recent = ref([]);
 const isLoading = ref(false);
