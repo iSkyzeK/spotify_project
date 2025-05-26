@@ -18,14 +18,8 @@ const limitOptions = [10, 20, 50, 100].map(n => ({ label: `Top ${n}`, value: n }
 
 const topTracks = ref([]);
 const topArtists = ref([]);
-const audioFeatures = ref({});
 const isLoading = ref(false);
 const errorMessage = ref(null);
-
-const listeningTime = computed(() => {
-  const total = topTracks.value.reduce((sum, t) => sum + t.duration_ms, 0);
-  return Math.round(total / 60000);
-});
 
 const fetchStats = async () => {
   isLoading.value = true;
@@ -39,17 +33,6 @@ const fetchStats = async () => {
     });
     topTracks.value = tracksRes.data.items;
     topArtists.value = artistsRes.data.items;
-
-    // const ids = topTracks.value.map(t => t.id).join(',');
-    // if (ids) {
-    //   const featuresRes = await api.get('/audio-features', { params: { ids } });
-    //   audioFeatures.value = featuresRes.data.audio_features.reduce((acc, f) => {
-    //     acc[f.id] = f;
-    //     return acc;
-    //   }, {});
-    // } else {
-    //   audioFeatures.value = {};
-    // }
   } catch (err) {
     console.error('Erreur stats', err);
     errorMessage.value = "Impossible de récupérer les statistiques.";
@@ -84,7 +67,6 @@ onMounted(fetchStats);
           <template #title>{{ track.name }}</template>
           <template #subtitle>{{ track.artists.map(a => a.name).join(', ') }}</template>
         </Card>
-      </div>
       <h3 class="text-lg font-semibold mb-2">🎤 Top {{ topLimit }} artistes</h3>
       <div class="tracks-grid mb-6">
         <Card v-for="artist in topArtists" :key="artist.id" class="track-card" @click="openLink(artist.external_urls.spotify)">
@@ -94,8 +76,6 @@ onMounted(fetchStats);
           <template #title>{{ artist.name }}</template>
         </Card>
       </div>
-      <h3 class="text-lg font-semibold mb-2">⏱ Temps d'écoute approximatif</h3>
-      <p>{{ listeningTime }} minutes</p>
     </div>
   </div>
 </template>
@@ -126,4 +106,4 @@ onMounted(fetchStats);
     object-fit: cover;
     border-radius: 8px;
 }
-</style>
+

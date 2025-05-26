@@ -48,7 +48,7 @@ onMounted(fetchLiked);
                 <template #title>{{ item.track.name }}</template>
                 <template #subtitle>{{ item.track.artists.map(a => a.name).join(', ') }}</template>
                 <template #footer>
-                    <Button icon="pi pi-trash" severity="danger" class="p-button-sm w-full" @click.stop="removeTrack(item.track.id)" />
+                    <Button icon="pi pi-trash" severity="danger" class="p-button-sm w-full" @click="removeTrack(item.track.id)" />
                 </template>
             </Card>
         </div>
