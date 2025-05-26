@@ -28,6 +28,10 @@ const removeTrack = async (id) => {
     }
 };
 
+const openLink = (url) => {
+    window.open(url, '_blank');
+};
+
 onMounted(fetchLiked);
 </script>
 
@@ -37,7 +41,7 @@ onMounted(fetchLiked);
         <ProgressSpinner v-if="isLoading" />
         <div v-if="errorMessage" class="text-red-500">{{ errorMessage }}</div>
         <div v-if="tracks.length" class="tracks-grid">
-            <Card v-for="item in tracks" :key="item.track.id" class="track-card">
+            <Card v-for="item in tracks" :key="item.track.id" class="track-card" @click="openLink(item.track.external_urls.spotify)">
                 <template #header>
                     <img :src="item.track.album.images[0]?.url" class="track-cover" />
                 </template>
