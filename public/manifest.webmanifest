@@ -1,0 +1,9 @@
+{
+  "name": "Spotify Vue",
+  "short_name": "Spotify",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "Spotify Vue offline",
+  "icons": []
+}
