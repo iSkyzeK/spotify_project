@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/user';
 import api from '@/api/spotify';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
+import SuggestedTracks from '@/components/SuggestedTracks.vue';
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
@@ -123,6 +124,7 @@ const goToPlaylist = (playlistId) => {
                 </template>
             </Card>
         </div>
+        <SuggestedTracks />
     </div>
 </template>
 

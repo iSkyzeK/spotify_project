@@ -313,11 +313,24 @@ watch(() => route.params.id, fetchPlaylistDetails);
     cursor: pointer;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .track-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.track-card .p-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.track-card .p-card-footer {
+    margin-top: auto;
 }
 
 .track-cover {
