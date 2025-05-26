@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref } from 'vue';
 import api from '@/api/spotify';
+import { onMounted, ref } from 'vue';
 
 const recent = ref([]);
 const isLoading = ref(false);
@@ -19,6 +19,10 @@ const fetchRecent = async () => {
     }
 };
 
+const openLink = (url) => {
+    window.open(url, '_blank');
+};
+
 onMounted(fetchRecent);
 </script>
 
@@ -28,7 +32,7 @@ onMounted(fetchRecent);
         <ProgressSpinner v-if="isLoading" />
         <div v-if="errorMessage" class="text-red-500">{{ errorMessage }}</div>
         <div v-if="recent.length" class="tracks-grid">
-            <Card v-for="item in recent" :key="item.played_at" class="track-card">
+            <Card v-for="item in recent" :key="item.played_at" class="track-card" @click="openLink(item.track.external_urls.spotify)">
                 <template #header>
                     <img :src="item.track.album.images[0]?.url" class="track-cover" />
                 </template>
